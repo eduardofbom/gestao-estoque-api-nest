@@ -1,0 +1,36 @@
+services:
+  api:
+    build: .
+    init: true
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: ${DB_HOST:?Defina DB_HOST no .env}
+      DB_PORT: ${DB_PORT:?Defina DB_PORT no .env}
+      DB_USERNAME: ${DB_USERNAME:?Defina DB_USERNAME no .env}
+      DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no .env}
+      DB_DATABASE: ${DB_DATABASE:?Defina DB_DATABASE no .env}
+      DB_SSL: ${DB_SSL:-false}
+      DB_SSL_CA_FILE : /run/certs/railway-root.crt
+      DB_SSL_SERVERNAME: ${DB_SSL_SERVERNAME:-}
+    ports:
+      - '127.0.0.1:${PORT:-3000}:3000'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - type: bind
+        source: ./certs/railway-root.crt
+        target: /run/certs/railway-root.crt
+        read_only: true
+        bind:
+          create_host_path: false

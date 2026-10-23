@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+coverage
+.git
+.env
+.env.*
+*.log
+*.tsbuildinfo
+implementation_gestao_estoque_typescript_postgres.md
